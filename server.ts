@@ -1,43 +1,32 @@
+import dotenv from 'dotenv';
+
 import express from 'express';
+import router from './routers';
 
-import { pool } from './db.js';
+import { sequelize } from './db';
 
-const port = 3000;
+dotenv.config();
+
+const PORT = process.env.PORT || 3000;
 
 const app = express();
+
 app.use(express.json());
 
-app.get('/', async (req, res) => {
-  try {
-    const data = await pool.query('SELECT * FROM schools');
-    res.status(200).send(data.rows);
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(500);    
-  }
-});
+app.use('/api', router);
 
-app.post('/', async (req, res) => {
-  const { name, location } = req.body;
+async function start() {
   try {
-    await pool.query('INSERT INTO schools (name, address) VALUES ($1, $2)', [name, location]);
-    res.status(200).send({ message: 'Successfully123 added student' });
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(500);    
-  }
-});
+    await sequelize.authenticate();
+    await sequelize.sync({ alter: true });
 
-app.get('/setup', async (req, res) => {
-  try {
-    await pool.query('CREATE TABLE schools(id SERIAL PRIMARY KEY, name VARCHAR(100), address VARCHAR(100))');
-    res.status(200).send({ message: 'Successfully setup' });
+    app.listen(PORT, () => {
+      console.log(`Started successfully on port ${PORT}`);
+    });
   } catch (err) {
+    console.log('error on start');
     console.log(err);
-    res.sendStatus(500);
   }
-});
+}
 
-app.listen(port, () => {
-  console.log(`Started on port ${port}`);
-});
+start();

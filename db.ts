@@ -1,10 +1,6 @@
-import Pg from 'pg';
+import { Sequelize } from 'sequelize';
 
-export const pool = new Pg.Pool({
+export const sequelize = new Sequelize('db123', 'user123', 'password123', {
   host: 'db',
-  port: 5432,
-  user: 'user123',
-  password: 'password123',
-  database: 'db123',
+  dialect: 'postgres',
 });
-
