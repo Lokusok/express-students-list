@@ -14,7 +14,7 @@ const Student = sequelize.define('Student', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  descr: {
+  notes: {
     type: DataTypes.STRING,
     allowNull: true,
   },
