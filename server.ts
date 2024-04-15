@@ -1,24 +1,41 @@
+import path from 'node:path';
 import dotenv from 'dotenv';
 
 import express from 'express';
 import router from './routers';
+import multer from 'multer';
 
 import { sequelize } from './db';
 
 dotenv.config();
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const extension = file.originalname.split('.').at(-1);
+    const uidWithExt = `${crypto.randomUUID()}.${extension}`;
+    cb(null, uidWithExt);
+  },
+});
+
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+const upload = multer({ storage });
 
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(upload.single('avatar'));
 
 app.use('/api', router);
 
 async function start() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
 
     app.listen(PORT, () => {
       console.log(`Started successfully on port ${PORT}`);

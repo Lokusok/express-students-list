@@ -5,7 +5,7 @@ import { TGetStudentsParams } from './types';
 
 class StudentsController {
   /**
-   * Получить списка всех студентов
+   * Получить список всех студентов
    */
   async getAllStudents(req: Request, res: Response) {
     const { role, offset, limit } = req.query;
@@ -35,13 +35,16 @@ class StudentsController {
    * Создание студента
    */
   async createStudent(req: Request, res: Response) {
+    const file = req.file;
+    const { path } = file;
+
     try {
       const newStudent = await Student.create({
         name: req.body.name,
         role: req.body.role,
         age: req.body.age,
         notes: req.body.notes,
-        avatar: req.body.avatar,
+        avatar: `/${path}`,
       });
 
       await new Promise((resolve) => setTimeout(resolve, 3000));
