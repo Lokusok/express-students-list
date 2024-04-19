@@ -2,6 +2,8 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 
 import express from 'express';
+import session from 'express-session';
+
 import router from './routers';
 import multer from 'multer';
 
@@ -25,6 +27,16 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const upload = multer({ storage });
 
+app.use(
+  session({
+    secret: process.env.SECRET || 'secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 день
+    },
+  })
+);
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
