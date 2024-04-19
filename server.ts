@@ -11,6 +11,12 @@ import { sequelize } from './db';
 
 dotenv.config();
 
+declare module 'express-session' {
+  interface SessionData {
+    userId: string;
+  }
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');

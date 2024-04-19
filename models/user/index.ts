@@ -4,6 +4,7 @@ import { sequelize } from '../../db.js';
 const User = sequelize.define('User', {
   login: {
     type: DataTypes.STRING,
+    unique: true,
     allowNull: false,
   },
   password: {

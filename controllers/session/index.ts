@@ -9,8 +9,6 @@ class SessionController {
    */
   async register(req: Request, res: Response) {
     try {
-      console.log('Register data:', req.body);
-
       const { login, password } = req.body;
 
       if (!login || !password) {
@@ -31,16 +29,13 @@ class SessionController {
 
       bcrypt.hash(password, 10, async (err, passwordHashed) => {
         if (err) {
-          console.log('Error when generating passwordHashed');
-          return;
+          throw err;
         }
 
         const newUser = await User.create({
           login,
           password: passwordHashed,
         });
-
-        console.log({ newUser: newUser });
 
         const profileInfo = { ...newUser.dataValues };
         delete profileInfo.password;
@@ -61,7 +56,6 @@ class SessionController {
     // @ts-ignore
     const sessionUserId = req.session.userId;
 
-    console.log('Authenticate reqSession: ', req.session);
     if (sessionUserId) {
       const findUser = await User.findOne({
         where: {
@@ -70,7 +64,6 @@ class SessionController {
       });
       const profileInfo = { ...findUser.dataValues };
       delete profileInfo.password;
-      console.log({ profileInfo });
 
       return res.status(200).send(profileInfo);
     }
@@ -87,8 +80,6 @@ class SessionController {
 
       await new Promise((res) => setTimeout(res, 3000));
 
-      console.log({ login, password });
-
       if (!login || !password) {
         return res
           .status(401)
@@ -102,13 +93,10 @@ class SessionController {
       });
 
       if (findUser) {
-        console.log('FindUserPassword:', findUser.getDataValue('password'));
         const isDataCorrect = bcrypt.compareSync(
           password,
           findUser.getDataValue('password')
         );
-        console.log('Login User: ', findUser);
-        console.log({ isDataCorrect });
 
         if (isDataCorrect) {
           // @ts-ignore
@@ -119,7 +107,6 @@ class SessionController {
 
       res.status(401).send({ error: 'Неверные данные!' });
     } catch (err) {
-      console.log('ERROR:', err);
       res.status(400).send({ error: 'Ошибка при входе в аккаунт...' });
     }
   }
@@ -129,9 +116,10 @@ class SessionController {
    */
   async logout(req: Request, res: Response) {
     try {
-      console.log('Logout session:', req.session);
       req.session.destroy((err) => {
-        console.log('Logout err:', err);
+        if (err) {
+          throw err;
+        }
       });
       res.status(200).send(null);
     } catch (err) {

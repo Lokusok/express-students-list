@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Student } from '../../models';
+import { Student, User } from '../../models';
 
 import { TGetStudentsParams } from './types';
 
@@ -8,51 +8,70 @@ class StudentsController {
    * Получить список всех студентов
    */
   async getAllStudents(req: Request, res: Response) {
-    const { role, offset, limit } = req.query;
+    try {
+      const { role, offset, limit } = req.query;
+      // @todo вытаскивать студентов, относящихся к определённому пользователю
+      // const { userId } = req.session;
 
-    let ormParams: TGetStudentsParams = role
-      ? {
-          where: { role },
-        }
-      : {};
+      let ormParams: TGetStudentsParams = role
+        ? {
+            where: { role },
+          }
+        : {};
 
-    ormParams = {
-      ...ormParams,
-      offset,
-      limit,
-    };
+      ormParams = {
+        ...ormParams,
+        offset,
+        limit,
+      };
 
-    const students = await Student.findAndCountAll(ormParams);
-    const result = {
-      result: students.rows,
-      totalPages: Math.ceil(students.count / Number(limit)),
-    };
+      const students = await Student.findAndCountAll(ormParams);
+      const result = {
+        result: students.rows,
+        totalPages: Math.ceil(students.count / Number(limit)),
+      };
 
-    res.send(result);
+      res.send(result);
+    } catch (err) {
+      console.log(err);
+      res.status(400).send({ error: 'Ошибка при получении студентов' });
+    }
   }
 
   /**
    * Создание студента
    */
   async createStudent(req: Request, res: Response) {
-    const file = req.file;
-    const { path } = file;
-
     try {
-      const newStudent = await Student.create({
+      const file = req.file;
+      const path = file?.path;
+      const { userId } = req.session;
+
+      const findUser = await User.findOne({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!findUser) {
+        return res.status(401).send({ error: 'Пользователя не существует' });
+      }
+
+      // @ts-ignore
+      const newStudent = await findUser.createStudent({
         name: req.body.name,
         role: req.body.role,
         age: req.body.age,
         notes: req.body.notes,
-        avatar: `/${path}`,
+        avatar: path ? `/${path}` : null,
       });
 
-      // @todo дизейблить на клиенте
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      // // @todo дизейблить на клиенте
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
 
       res.send(newStudent);
     } catch (err) {
-      res.status(400).send({ message: 'Ошибка при добавлении пользователя' });
+      res.status(400).send({ error: 'Ошибка при добавлении студента' });
     }
   }
 
