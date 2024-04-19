@@ -40,13 +40,32 @@ class SessionController {
           password: passwordHashed,
         });
 
-        console.log({ newUser });
-      });
+        console.log({ newUser: newUser });
 
-      res.send({ message: 'Under construct...' });
+        const profileInfo = { ...newUser.dataValues };
+        delete profileInfo.password;
+
+        // @ts-ignore
+        req.session.userId = newUser.getDataValue('id');
+        res.status(201).send(profileInfo);
+      });
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при регистрации...' });
     }
+  }
+
+  /**
+   * Аутентификация пользователя
+   */
+  async authenticate(req: Request, res: Response) {
+    res.send({ message: 'Under construct' });
+  }
+
+  /**
+   * Авторизация пользователя
+   */
+  async authorize(req: Request, res: Response) {
+    res.send({ message: 'Under construct' });
   }
 }
 

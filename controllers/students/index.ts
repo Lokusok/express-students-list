@@ -47,6 +47,7 @@ class StudentsController {
         avatar: `/${path}`,
       });
 
+      // @todo дизейблить на клиенте
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       res.send(newStudent);
