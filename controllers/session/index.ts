@@ -11,6 +11,8 @@ class SessionController {
     try {
       const { login, password } = req.body;
 
+      // return res.status(400).send({ error: 'Ошибка!' });
+
       if (!login || !password) {
         return res
           .status(401)
@@ -40,7 +42,6 @@ class SessionController {
         const profileInfo = { ...newUser.dataValues };
         delete profileInfo.password;
 
-        // @ts-ignore
         req.session.userId = newUser.getDataValue('id');
         res.status(201).send(profileInfo);
       });
@@ -53,7 +54,6 @@ class SessionController {
    * Аутентификация пользователя
    */
   async remind(req: Request, res: Response) {
-    // @ts-ignore
     const sessionUserId = req.session.userId;
 
     if (sessionUserId) {
@@ -78,7 +78,7 @@ class SessionController {
     try {
       const { login, password } = req.body;
 
-      await new Promise((res) => setTimeout(res, 3000));
+      // await new Promise((res) => setTimeout(res, 3000));
 
       if (!login || !password) {
         return res
@@ -99,7 +99,6 @@ class SessionController {
         );
 
         if (isDataCorrect) {
-          // @ts-ignore
           req.session.userId = findUser.getDataValue('id');
           return res.status(200).send(findUser);
         }

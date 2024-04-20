@@ -11,7 +11,6 @@ class StudentsController {
   async getAllStudents(req: Request, res: Response) {
     try {
       const { role, offset, limit } = req.query;
-      // @todo вытаскивать студентов, относящихся к определённому пользователю
       const { userId } = req.session;
 
       if (!userId) {
@@ -24,41 +23,37 @@ class StudentsController {
         },
       });
 
-      // @ts-ignore
       const test = await Student.findAll({
         where: {
           UserId: userId,
         },
       });
 
-      console.log({ findUser });
-      console.log({ test });
-
       let ormParams: TGetStudentsParams = role
         ? {
             where: {
+              role,
               UserId: userId,
             },
           }
         : {};
 
-      ormParams = {
-        ...ormParams,
-        offset,
-        limit,
-      };
+      const students = await Student.findAll(ormParams);
 
-      const students = await Student.findAll({
+      const startIndex = Number(offset);
+      const endIndex = Number(offset) + Number(limit);
+
+      const studentsResult = students.slice(startIndex, endIndex);
+      const studentsCount = await Student.count({
         where: {
           UserId: userId,
         },
       });
-      const result = {
-        result: students,
-        totalPages: Math.ceil(students.length / Number(limit)),
-      };
 
-      console.log('@@@', students[0]?.dataValues);
+      const result = {
+        result: studentsResult,
+        totalPages: Math.ceil(studentsCount / Number(limit)),
+      };
 
       res.send(result);
     } catch (err) {
@@ -94,9 +89,6 @@ class StudentsController {
         notes: req.body.notes,
         avatar: path ? `/${path}` : null,
       });
-
-      // // @todo дизейблить на клиенте
-      // await new Promise((resolve) => setTimeout(resolve, 3000));
 
       res.send(newStudent);
     } catch (err) {
