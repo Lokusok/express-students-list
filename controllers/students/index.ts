@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Student, User } from '../../models';
 
 import { TGetStudentsParams } from './types';
+import { Sequelize, Op } from 'sequelize';
 
 class StudentsController {
   /**
@@ -11,11 +12,33 @@ class StudentsController {
     try {
       const { role, offset, limit } = req.query;
       // @todo вытаскивать студентов, относящихся к определённому пользователю
-      // const { userId } = req.session;
+      const { userId } = req.session;
+
+      if (!userId) {
+        return res.status(400).send({ error: 'Сначала авторизуйтесь' });
+      }
+
+      const findUser = await User.findOne({
+        where: {
+          id: userId,
+        },
+      });
+
+      // @ts-ignore
+      const test = await Student.findAll({
+        where: {
+          UserId: userId,
+        },
+      });
+
+      console.log({ findUser });
+      console.log({ test });
 
       let ormParams: TGetStudentsParams = role
         ? {
-            where: { role },
+            where: {
+              UserId: userId,
+            },
           }
         : {};
 
@@ -25,11 +48,17 @@ class StudentsController {
         limit,
       };
 
-      const students = await Student.findAndCountAll(ormParams);
+      const students = await Student.findAll({
+        where: {
+          UserId: userId,
+        },
+      });
       const result = {
-        result: students.rows,
-        totalPages: Math.ceil(students.count / Number(limit)),
+        result: students,
+        totalPages: Math.ceil(students.length / Number(limit)),
       };
+
+      console.log('@@@', students[0]?.dataValues);
 
       res.send(result);
     } catch (err) {
