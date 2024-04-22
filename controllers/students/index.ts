@@ -125,9 +125,7 @@ class StudentsController {
         res.status(404).send({ message: `Студент с id ${id} не найден.` });
       }
     } catch (err) {
-      res
-        .status(400)
-        .send({ message: `Ошибка изменения студента с id ${id}.` });
+      res.status(400).send({ error: `Ошибка удаления студента с id ${id}.` });
     }
   }
 
@@ -136,9 +134,10 @@ class StudentsController {
    */
   async updateFullStudent(req: Request, res: Response) {
     const { id } = req.params;
-    const student = req.body;
 
     try {
+      const student = req.body;
+
       await Student.update(student, {
         where: {
           id: Number(id),
@@ -147,9 +146,7 @@ class StudentsController {
 
       res.status(200).send({ message: `Студент с id ${id} обновлён.` });
     } catch (err) {
-      res
-        .status(400)
-        .send({ message: `Ошибка изменения студента с id ${id}.` });
+      res.status(400).send({ error: `Ошибка изменения студента с id ${id}.` });
     }
   }
 }
