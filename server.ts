@@ -50,11 +50,6 @@ app.use(upload.single('avatar'));
 
 app.use('/api', router);
 
-app.get('/', (req, res) => {
-  console.log(req.session);
-  res.send('Success');
-});
-
 async function start() {
   try {
     await sequelize.authenticate();

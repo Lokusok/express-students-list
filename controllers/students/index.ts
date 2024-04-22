@@ -14,50 +14,60 @@ class StudentsController {
       const { userId } = req.session;
 
       if (!userId) {
-        return res.status(400).send({ error: 'Сначала авторизуйтесь' });
+        return res.status(400).send({ error: 'Требуется авторизация' });
       }
-
-      const findUser = await User.findOne({
-        where: {
-          id: userId,
-        },
-      });
-
-      const test = await Student.findAll({
-        where: {
-          UserId: userId,
-        },
-      });
 
       let ormParams: TGetStudentsParams = role
         ? {
+            where: { role, UserId: userId },
+          }
+        : {
             where: {
-              role,
               UserId: userId,
             },
-          }
-        : {};
+          };
 
-      const students = await Student.findAll(ormParams);
+      ormParams = {
+        ...ormParams,
+        offset,
+        limit,
+      };
 
-      const startIndex = Number(offset);
-      const endIndex = Number(offset) + Number(limit);
-
-      const studentsResult = students.slice(startIndex, endIndex);
-      const studentsCount = await Student.count({
+      const excellentCount = await Student.count({
         where: {
-          UserId: userId,
+          role: 'excellent',
+        },
+      });
+      const goodCount = await Student.count({
+        where: {
+          role: 'good',
+        },
+      });
+      const normalCount = await Student.count({
+        where: {
+          role: 'normal',
+        },
+      });
+      const badCount = await Student.count({
+        where: {
+          role: 'bad',
         },
       });
 
+      const students = await Student.findAndCountAll(ormParams);
       const result = {
-        result: studentsResult,
-        totalPages: Math.ceil(studentsCount / Number(limit)),
+        result: students.rows,
+        totalPages: Math.ceil(students.count / Number(limit)),
+        countRoles: {
+          excellent: excellentCount,
+          good: goodCount,
+          normal: normalCount,
+          bad: badCount,
+        },
       };
 
       res.send(result);
     } catch (err) {
-      console.log(err);
       res.status(400).send({ error: 'Ошибка при получении студентов' });
     }
   }
