@@ -112,6 +112,8 @@ class StudentsController {
   async removeStudent(req: Request, res: Response) {
     const { id } = req.params;
 
+    console.log('in single');
+
     try {
       const countOfDelete = await Student.destroy({
         where: {
@@ -127,6 +129,25 @@ class StudentsController {
     } catch (err) {
       res.status(400).send({ error: `Ошибка удаления студента с id ${id}.` });
     }
+  }
+
+  async removeStudents(req: Request, res: Response) {
+    const { ids } = req.body;
+
+    const deletedCount = await Student.destroy({
+      where: {
+        id: ids,
+      },
+    });
+
+    if (deletedCount > 0) {
+      return res.status(200).send({ message: 'Успешно удалено!' });
+    }
+
+    console.log({ ids });
+    console.log('in multiple');
+
+    res.status(400).send({ error: 'Ошибка при удалении студентов' });
   }
 
   /**
