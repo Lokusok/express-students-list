@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Student, User } from '../../models';
 
 import { TGetStudentsParams } from './types';
-import { Sequelize, Op } from 'sequelize';
 
 class StudentsController {
   /**
@@ -12,10 +11,6 @@ class StudentsController {
     try {
       const { role, offset, limit } = req.query;
       const { userId } = req.session;
-
-      if (!userId) {
-        return res.status(400).send({ error: 'Требуется авторизация' });
-      }
 
       let ormParams: TGetStudentsParams = role
         ? {
