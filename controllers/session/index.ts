@@ -78,8 +78,6 @@ class SessionController {
     try {
       const { login, password } = req.body;
 
-      // await new Promise((res) => setTimeout(res, 3000));
-
       if (!login || !password) {
         return res
           .status(401)
