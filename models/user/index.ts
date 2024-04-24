@@ -1,7 +1,10 @@
 import { DataTypes } from 'sequelize';
+
 import { sequelize } from '../../db.js';
 
-const User = sequelize.define('User', {
+import { UserInstance } from './types.js';
+
+const User = sequelize.define<UserInstance>('User', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -26,6 +29,10 @@ const User = sequelize.define('User', {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  avatar: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

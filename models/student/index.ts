@@ -1,7 +1,9 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../db.js';
 
-const Student = sequelize.define('Student', {
+import { StudentInstance } from './types.js';
+
+const Student = sequelize.define<StudentInstance>('Student', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,

@@ -123,6 +123,34 @@ class SessionController {
       res.status(400).send({ error: 'Ошибка при выходе из аккаунта...' });
     }
   }
+
+  /**
+   * Изменить данные о пользователе
+   */
+  async change(req: Request, res: Response) {
+    try {
+      const { username, bio } = req.body;
+      const file = req.file;
+      const path = file?.path;
+
+      const findUser = await User.findOne({
+        where: {
+          id: req.session.userId,
+        },
+      });
+
+      findUser.username = username;
+      findUser.bio = bio;
+      findUser.avatar = path ? `/${path}` : null;
+
+      findUser.save();
+
+      res.status(200).send(findUser);
+    } catch (err) {
+      console.log(err);
+      res.status(400).send({ error: 'Ошибка при изменении данных' });
+    }
+  }
 }
 
 const sessionController = new SessionController();

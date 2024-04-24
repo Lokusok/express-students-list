@@ -46,6 +46,7 @@ app.use(
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(upload.single('avatar'));
 
 app.use('/api', router);
