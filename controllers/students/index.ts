@@ -107,12 +107,10 @@ class StudentsController {
   async removeStudent(req: Request, res: Response) {
     const { id } = req.params;
 
-    console.log('in single');
-
     try {
       const countOfDelete = await Student.destroy({
         where: {
-          id: Number(id),
+          id,
         },
       });
 
@@ -126,6 +124,9 @@ class StudentsController {
     }
   }
 
+  /**
+   * Удаление нескольких студентов
+   */
   async removeStudents(req: Request, res: Response) {
     const { ids } = req.body;
 
@@ -138,9 +139,6 @@ class StudentsController {
     if (deletedCount > 0) {
       return res.status(200).send({ message: 'Успешно удалено!' });
     }
-
-    console.log({ ids });
-    console.log('in multiple');
 
     res.status(400).send({ error: 'Ошибка при удалении студентов' });
   }
@@ -156,13 +154,34 @@ class StudentsController {
 
       await Student.update(student, {
         where: {
-          id: Number(id),
+          id,
         },
       });
 
       res.status(200).send({ message: `Студент с id ${id} обновлён.` });
     } catch (err) {
       res.status(400).send({ error: `Ошибка изменения студента с id ${id}.` });
+    }
+  }
+
+  /**
+   * Частичное обновление студента
+   */
+  async updatePartStudent(req: Request, res: Response) {
+    const { id } = req.params;
+
+    try {
+      const student = req.body;
+
+      await Student.update(student, {
+        where: {
+          id,
+        },
+      });
+
+      res.status(200).send({ message: `Студент с id ${id} обновлён.` });
+    } catch (err) {
+      res.status(400).send({ error: `Ошибка обновления студента с id ${id}.` });
     }
   }
 }

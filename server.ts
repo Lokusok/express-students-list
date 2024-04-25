@@ -60,8 +60,7 @@ async function start() {
       console.log(`Started successfully on port ${PORT}`);
     });
   } catch (err) {
-    console.log('error on start');
-    console.log(err);
+    console.log('Error on start:', err);
   }
 }
 

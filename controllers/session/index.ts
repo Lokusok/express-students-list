@@ -147,7 +147,6 @@ class SessionController {
 
       res.status(200).send(findUser);
     } catch (err) {
-      console.log(err);
       res.status(400).send({ error: 'Ошибка при изменении данных' });
     }
   }

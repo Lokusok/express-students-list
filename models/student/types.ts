@@ -7,6 +7,7 @@ type TStudent = {
   age: string;
   notes: string;
   avatar: string;
+  isFavourite: boolean;
 };
 
 interface StudentCreationAttributes extends Optional<TStudent, 'id'> {}

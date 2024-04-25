@@ -10,5 +10,6 @@ studentsRouter.post('/', onlyAuth, studentsController.createStudent);
 studentsRouter.delete('/:id', onlyAuth, studentsController.removeStudent);
 studentsRouter.delete('/', onlyAuth, studentsController.removeStudents);
 studentsRouter.put('/:id', onlyAuth, studentsController.updateFullStudent);
+studentsRouter.patch('/:id', onlyAuth, studentsController.updatePartStudent);
 
 export default studentsRouter;

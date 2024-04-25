@@ -30,6 +30,10 @@ const Student = sequelize.define<StudentInstance>('Student', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  isFavourite: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 export default Student;
