@@ -33,6 +33,8 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const upload = multer({ storage });
 
+console.log('@@@', process.env.EMAIL_LOGIN);
+
 app.use(
   session({
     secret: process.env.SECRET || 'secret_key',

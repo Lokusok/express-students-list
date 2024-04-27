@@ -108,13 +108,13 @@ class StudentsController {
     const { id } = req.params;
 
     try {
-      const countOfDelete = await Student.destroy({
+      const deleteCount = await Student.destroy({
         where: {
           id,
         },
       });
 
-      if (countOfDelete > 0) {
+      if (deleteCount > 0) {
         res.status(200).send({ message: `Студент с id ${id} удалён.` });
       } else {
         res.status(404).send({ message: `Студент с id ${id} не найден.` });

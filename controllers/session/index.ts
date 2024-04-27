@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { User } from '../../models';
 import bcrypt from 'bcrypt';
+import Mailer from '../../services/mailer';
 
 class SessionController {
   /**
@@ -41,7 +42,10 @@ class SessionController {
         delete profileInfo.password;
 
         req.session.userId = newUser.getDataValue('id');
-        res.status(201).send(profileInfo);
+
+        Mailer.sendAllowMessage(profileInfo);
+
+        res.status(201).send(null);
       });
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при регистрации...' });
@@ -153,7 +157,7 @@ class SessionController {
    * Разрешить пользователю вход в систему
    */
   async allow(req: Request, res: Response) {
-    const { id } = req.params;
+    const { id } = req.body;
 
     try {
       const findUser = await User.findOne({
@@ -162,11 +166,42 @@ class SessionController {
         },
       });
 
+      console.log({ id });
+      console.log({ findUser });
+
+      if (!findUser) {
+        return res
+          .status(404)
+          .send({ error: 'Такого пользователя не существует' });
+      }
+
       findUser.isAllowed = true;
       findUser.save();
 
       res.status(204).send(null);
-    } catch (err) {}
+    } catch (err) {
+      res.status(400).send({ error: 'Ошибка при подтверждении пользователя' });
+    }
+  }
+
+  async deleteUser(req: Request, res: Response) {
+    const { id } = req.body;
+
+    try {
+      const deleteCount = await User.destroy({
+        where: {
+          id,
+        },
+      });
+
+      if (deleteCount > 0) {
+        res.status(200).send({ message: `Пользователь с id ${id} удалён.` });
+      } else {
+        res.status(404).send({ message: `Пользователь с id ${id} не найден.` });
+      }
+    } catch (err) {
+      res.status(400).send({ error: 'Ошибка при удалении пользователя' });
+    }
   }
 }
 

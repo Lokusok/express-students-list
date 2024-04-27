@@ -10,6 +10,6 @@ sessionRouter.post('/remind', onlyAllowed, sessionController.remind);
 sessionRouter.post('/login', onlyAllowed, sessionController.login);
 sessionRouter.post('/logout', onlyAllowed, sessionController.logout);
 sessionRouter.post('/change', onlyAllowed, sessionController.change);
-sessionRouter.post('/allow/:id', sessionController.allow);
+sessionRouter.post('/allow/', sessionController.allow);
 
 export default sessionRouter;

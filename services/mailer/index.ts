@@ -1,6 +1,10 @@
 import nodemailer from 'nodemailer';
 
+import dotenv from 'dotenv';
+
 import { TUser } from '../../models/user/types';
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -19,15 +23,15 @@ class Mailer {
    */
   static async sendAllowMessage(user: TUser) {
     console.log(`Отправляю сообщение пользователю: ${user.login}`);
-    const textEmail = `
+    const htmlEmail = `
       Подтвердите свой аккаунт в сервисе <b>STUDE-LIST</b> перейдя по ссылке:
-      <a href="${process.env.CLIENT}/session/allow/${user.id}">Ссылка для подтверждения</a>
+      <a href="${process.env.CLIENT}/allow/${user.id}">Ссылка для подтверждения</a>
     `;
     const mailOptions = {
       from: '<noreply@stude-list.ru>',
       to: user.login,
       subject: 'Hello from Nodemailer',
-      text: textEmail,
+      html: htmlEmail,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
