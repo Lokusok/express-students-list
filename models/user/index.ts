@@ -34,6 +34,10 @@ const User = sequelize.define<UserInstance>('User', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  isAllowed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 export default User;

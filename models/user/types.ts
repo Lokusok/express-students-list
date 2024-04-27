@@ -1,12 +1,13 @@
 import { Model, Optional } from 'sequelize';
 
-type TUser = {
+export type TUser = {
   id: string;
   username: string;
   login: string;
   password: string;
   bio: string;
   avatar: string;
+  isAllowed: boolean;
 };
 
 interface UserCreationAttributes extends Optional<TUser, 'id'> {}
