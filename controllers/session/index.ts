@@ -11,8 +11,6 @@ class SessionController {
     try {
       const { login, password } = req.body;
 
-      // return res.status(400).send({ error: 'Ошибка!' });
-
       if (!login || !password) {
         return res
           .status(401)
@@ -149,6 +147,26 @@ class SessionController {
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при изменении данных' });
     }
+  }
+
+  /**
+   * Разрешить пользователю вход в систему
+   */
+  async allow(req: Request, res: Response) {
+    const { id } = req.params;
+
+    try {
+      const findUser = await User.findOne({
+        where: {
+          id,
+        },
+      });
+
+      findUser.isAllowed = true;
+      findUser.save();
+
+      res.status(204).send(null);
+    } catch (err) {}
   }
 }
 

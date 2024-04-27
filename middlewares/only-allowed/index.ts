@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../../models';
 
-/**
- * Миддлвара для пропуска только вошедших в систему пользователей
- */
-async function onlyAuth(req: Request, res: Response, next: NextFunction) {
+async function onlyAllowed(req: Request, res: Response, next: NextFunction) {
   const { userId } = req.session;
 
   if (!userId) return res.status(403).send({ error: 'Требуется авторизация' });
@@ -18,7 +15,10 @@ async function onlyAuth(req: Request, res: Response, next: NextFunction) {
   if (!findUser)
     return res.status(404).send({ error: 'Такого пользователя не существует' });
 
+  if (!findUser.isAllowed)
+    return res.status(403).send({ error: 'Сначала подтвердите аккаунт' });
+
   next();
 }
 
-export default onlyAuth;
+export default onlyAllowed;
