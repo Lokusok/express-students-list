@@ -63,7 +63,7 @@ class StudentsController {
 
       res.send(result);
     } catch (err) {
-      res.status(400).send({ error: 'чполучении студентов' });
+      res.status(400).send({ error: 'Ошибка при получении студентов' });
     }
   }
 
@@ -150,19 +150,25 @@ class StudentsController {
     const { id } = req.params;
 
     try {
+      const file = req.file;
+      const path = file?.path;
       const student = req.body;
 
-      console.log({ incoming: student });
-
-      await Student.update(student, {
+      const findStudent = await Student.findOne({
         where: {
           id,
         },
       });
 
-      res.status(200).send({ message: `Студент с id ${id} обновлён.` });
+      for (const key in student) {
+        findStudent[key] = student[key];
+      }
+      findStudent.avatar = path ? `/${path}` : findStudent.avatar;
+
+      await findStudent.save();
+
+      res.status(200).send(findStudent.dataValues);
     } catch (err) {
-      console.log(err);
       res.status(400).send({ error: `Ошибка изменения студента с id ${id}.` });
     }
   }

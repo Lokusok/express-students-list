@@ -166,9 +166,6 @@ class SessionController {
         },
       });
 
-      console.log({ id });
-      console.log({ findUser });
-
       if (!findUser) {
         return res
           .status(404)
@@ -225,7 +222,6 @@ class SessionController {
           return res.status(401).send({ error: 'Пароли не совпадают' });
         }
 
-        console.log({ result });
         return res.status(200).send({ message: 'Пароли совпадают' });
       });
     } catch (err) {
