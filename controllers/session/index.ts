@@ -184,6 +184,9 @@ class SessionController {
     }
   }
 
+  /**
+   * Удалить пользователя
+   */
   async deleteUser(req: Request, res: Response) {
     const { id } = req.body;
 
@@ -201,6 +204,32 @@ class SessionController {
       }
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при удалении пользователя' });
+    }
+  }
+
+  /**
+   * Подтвердить пароль
+   */
+  async confirmPassword(req: Request, res: Response) {
+    const { id, password } = req.body;
+
+    try {
+      const findUser = await User.findOne({
+        where: {
+          id,
+        },
+      });
+
+      bcrypt.compare(password, findUser.password, (err, result) => {
+        if (err) {
+          return res.status(401).send({ error: 'Пароли не совпадают' });
+        }
+
+        console.log({ result });
+        return res.status(200).send({ message: 'Пароли совпадают' });
+      });
+    } catch (err) {
+      res.status(400).send({ error: 'Ошибка при подтверждении пароля' });
     }
   }
 }

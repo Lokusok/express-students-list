@@ -3,14 +3,26 @@ import { User } from '../../models';
 
 async function onlyAllowed(req: Request, res: Response, next: NextFunction) {
   const { userId } = req.session;
+  const { login } = req.body;
 
-  if (!userId) return res.status(403).send({ error: 'Требуется авторизация' });
+  if (!userId && !login)
+    return res.status(403).send({ error: 'Требуется авторизация' });
 
-  const findUser = await User.findOne({
-    where: {
-      id: userId,
-    },
-  });
+  let findUser = null;
+
+  if (userId) {
+    findUser = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+  } else if (login) {
+    findUser = await User.findOne({
+      where: {
+        login,
+      },
+    });
+  }
 
   if (!findUser)
     return res.status(404).send({ error: 'Такого пользователя не существует' });

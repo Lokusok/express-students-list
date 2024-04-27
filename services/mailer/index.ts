@@ -30,7 +30,7 @@ class Mailer {
     const mailOptions = {
       from: '<noreply@stude-list.ru>',
       to: user.login,
-      subject: 'Hello from Nodemailer',
+      subject: 'Подтверждение аккаунта',
       html: htmlEmail,
     };
 

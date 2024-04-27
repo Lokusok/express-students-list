@@ -63,7 +63,7 @@ class StudentsController {
 
       res.send(result);
     } catch (err) {
-      res.status(400).send({ error: 'Ошибка при получении студентов' });
+      res.status(400).send({ error: 'чполучении студентов' });
     }
   }
 
@@ -152,6 +152,8 @@ class StudentsController {
     try {
       const student = req.body;
 
+      console.log({ incoming: student });
+
       await Student.update(student, {
         where: {
           id,
@@ -160,6 +162,7 @@ class StudentsController {
 
       res.status(200).send({ message: `Студент с id ${id} обновлён.` });
     } catch (err) {
+      console.log(err);
       res.status(400).send({ error: `Ошибка изменения студента с id ${id}.` });
     }
   }
