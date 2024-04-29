@@ -161,6 +161,7 @@ class StudentsController {
       });
 
       for (const key in student) {
+        if (key === 'avatar') continue;
         findStudent[key] = student[key];
       }
       findStudent.avatar = path ? `/${path}` : findStudent.avatar;

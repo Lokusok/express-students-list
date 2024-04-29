@@ -202,9 +202,14 @@ class SessionController {
       });
 
       if (deleteCount > 0) {
-        res.status(200).send({ message: `Пользователь с id ${id} удалён.` });
+        delete req.session.userId;
+        return res
+          .status(200)
+          .send({ message: `Пользователь с id ${id} удалён.` });
       } else {
-        res.status(404).send({ message: `Пользователь с id ${id} не найден.` });
+        return res
+          .status(404)
+          .send({ message: `Пользователь с id ${id} не найден.` });
       }
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при удалении пользователя' });
