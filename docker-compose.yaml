@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   db:
     image: postgres
@@ -7,6 +7,7 @@ services:
       POSTGRES_USER: user123
       POSTGRES_DB: db123
   app:
+    build: .
     image: my-node-app
     volumes:
       - $PWD:/usr/src/app

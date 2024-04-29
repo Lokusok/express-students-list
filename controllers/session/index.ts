@@ -166,9 +166,6 @@ class SessionController {
         },
       });
 
-      console.log({ id });
-      console.log({ findUser });
-
       if (!findUser) {
         return res
           .status(404)

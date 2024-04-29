@@ -11,6 +11,10 @@ import { sequelize } from './db';
 
 dotenv.config();
 
+const MODE = process.env.NODE_ENV ?? 'development';
+
+console.log('MODE:', MODE);
+
 declare module 'express-session' {
   interface SessionData {
     userId: string;
