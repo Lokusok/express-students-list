@@ -24,6 +24,8 @@ class Mailer {
   static async sendAllowMessage(user: TUser) {
     console.log(`Отправляю сообщение пользователю: ${user.login}`);
     const htmlEmail = `
+      <h2 style="font-family: Arial, sans-serif;">STUDE-LIST. Подтверждение</h2>
+      <hr>
       Подтвердите свой аккаунт в сервисе <b>STUDE-LIST</b> перейдя по ссылке:
       <a href="${process.env.CLIENT}/allow/${user.id}">Ссылка для подтверждения</a>
     `;

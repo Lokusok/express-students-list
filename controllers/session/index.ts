@@ -166,10 +166,17 @@ class SessionController {
         },
       });
 
+      console.log({ id });
+      console.log({ findUser });
+
       if (!findUser) {
         return res
           .status(404)
           .send({ error: 'Такого пользователя не существует' });
+      }
+
+      if (findUser.isAllowed) {
+        return res.status(400).send({ error: 'Пользователь уже подтверждён!' });
       }
 
       findUser.isAllowed = true;

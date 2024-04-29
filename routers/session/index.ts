@@ -4,11 +4,17 @@ import { sessionController } from '../../controllers';
 
 import onlyAllowed from '../../middlewares/only-allowed';
 import onlyAuth from '../../middlewares/only-auth';
+import onlyLogined from '../../middlewares/only-logined';
 
 const sessionRouter = Router();
 
 sessionRouter.post('/register', sessionController.register);
-sessionRouter.post('/remind', onlyAllowed, sessionController.remind);
+sessionRouter.post(
+  '/remind',
+  onlyLogined,
+  onlyAllowed,
+  sessionController.remind
+);
 sessionRouter.post('/login', onlyAllowed, sessionController.login);
 sessionRouter.post('/logout', onlyAllowed, sessionController.logout);
 sessionRouter.post('/change', onlyAllowed, sessionController.change);
