@@ -189,25 +189,43 @@ class SessionController {
    * Удалить пользователя
    */
   async deleteUser(req: Request, res: Response) {
-    const { id } = req.body;
+    const { id, password } = req.body;
 
     try {
-      const deleteCount = await User.destroy({
+      const findUser = await User.findOne({
         where: {
           id,
         },
       });
 
-      if (deleteCount > 0) {
-        delete req.session.userId;
-        return res
-          .status(200)
-          .send({ message: `Пользователь с id ${id} удалён.` });
-      } else {
+      if (!findUser) {
         return res
           .status(404)
-          .send({ message: `Пользователь с id ${id} не найден.` });
+          .send({ error: 'Такого пользователя не существует!' });
       }
+
+      bcrypt.compare(password, findUser.password, async (err, result) => {
+        if (err || !result) {
+          return res.status(401).send({ message: 'Неверный пароль!' });
+        }
+
+        const deleteCount = await User.destroy({
+          where: {
+            id: findUser.id,
+          },
+        });
+
+        if (deleteCount > 0) {
+          delete req.session.userId;
+          return res
+            .status(200)
+            .send({ message: `Пользователь с id ${id} удалён.` });
+        } else {
+          return res
+            .status(404)
+            .send({ message: `Пользователь с id ${id} не найден.` });
+        }
+      });
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при удалении пользователя' });
     }
@@ -227,7 +245,7 @@ class SessionController {
       });
 
       bcrypt.compare(password, findUser.password, (err, result) => {
-        if (err) {
+        if (err || !result) {
           return res.status(401).send({ error: 'Пароли не совпадают' });
         }
 
