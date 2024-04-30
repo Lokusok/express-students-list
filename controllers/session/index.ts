@@ -120,7 +120,7 @@ class SessionController {
           throw err;
         }
       });
-      res.status(200).send(null);
+      res.status(204).send(null);
     } catch (err) {
       res.status(400).send({ error: 'Ошибка при выходе из аккаунта...' });
     }
