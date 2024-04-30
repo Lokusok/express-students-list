@@ -8,6 +8,7 @@ export type TUser = {
   bio: string;
   avatar: string;
   isAllowed: boolean;
+  isRestoringPassword: boolean;
 };
 
 interface UserCreationAttributes extends Optional<TUser, 'id'> {}

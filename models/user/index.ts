@@ -38,6 +38,10 @@ const User = sequelize.define<UserInstance>('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  isRestoringPassword: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 export default User;

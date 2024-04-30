@@ -237,6 +237,72 @@ class SessionController {
       res.status(400).send({ error: 'Ошибка при подтверждении пароля' });
     }
   }
+
+  /**
+   * Начать процесс восстановления пароля
+   */
+  async startPasswordRestore(req: Request, res: Response) {
+    try {
+      const findUser = await User.findOne({
+        where: {
+          id: req.session.userId,
+        },
+      });
+
+      findUser.isRestoringPassword = true;
+      await findUser.save();
+
+      Mailer.sendResetPasswordMessage(findUser);
+
+      res.status(200).send({
+        message: 'Процесс сброса пароля начат. Проверьте Вашу почту.',
+      });
+    } catch (err) {
+      res.status(400).send({ error: 'Ошибка при сбросе пароля' });
+    }
+  }
+
+  /**
+   * Сброс пароля
+   */
+  async passwordReset(req: Request, res: Response) {
+    try {
+      const { login, password } = req.body;
+
+      console.log('Сброс пароля:', { login, password });
+
+      const findUser = await User.findOne({
+        where: {
+          id: req.session.userId,
+        },
+      });
+
+      findUser.isRestoringPassword = false;
+
+      const isPasswordsEqual = bcrypt.compareSync(
+        password,
+        findUser.getDataValue('password')
+      );
+
+      console.log({ isPasswordsEqual });
+      if (isPasswordsEqual) {
+        return res.status(403).send({ error: 'Пароли не должны совпадать!' });
+      }
+
+      bcrypt.hash(password, 10, async (err, passwordHashed) => {
+        if (err) {
+          throw err;
+        }
+
+        findUser.password = passwordHashed;
+        await findUser.save();
+
+        res.status(204).send(null);
+      });
+    } catch (err) {
+      res.status(400).send({ error: 'Ошибка при сбросе пароля' });
+    }
+  }
 }
 
 const sessionController = new SessionController();
