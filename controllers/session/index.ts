@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 
-import { User } from '../../models';
 import bcrypt from 'bcrypt';
+
+import { User } from '../../models';
 import Mailer from '../../services/mailer';
 
 class SessionController {
