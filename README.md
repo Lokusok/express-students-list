@@ -1,1 +1,1 @@
-## Скелет для приложений на Express + Postgres
+## Бэкенд для Stude-List

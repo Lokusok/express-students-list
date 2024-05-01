@@ -58,7 +58,11 @@ app.use('/api', router);
 async function start() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ force: true });
+    if (MODE === 'development') {
+      await sequelize.sync({ force: true });
+    } else {
+      await sequelize.sync({ alter: true });
+    }
 
     app.listen(PORT, () => {
       console.log(`Started successfully on port ${PORT}`);
