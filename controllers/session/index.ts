@@ -19,9 +19,11 @@ class SessionController {
           .send({ error: 'Неверные данные для регистрации' });
       }
 
+      const lowerLogin = String(login).toLowerCase();
+
       const findUser = await User.findOne({
         where: {
-          login,
+          login: lowerLogin,
         },
       });
 
@@ -35,7 +37,7 @@ class SessionController {
         }
 
         const newUser = await User.create({
-          login,
+          login: lowerLogin,
           password: passwordHashed,
         });
 
@@ -87,9 +89,11 @@ class SessionController {
           .send({ error: 'Неверные данные для логинизации' });
       }
 
+      const lowerLogin = String(login).toLowerCase();
+
       const findUser = await User.findOne({
         where: {
-          login,
+          login: lowerLogin,
         },
       });
 
@@ -288,8 +292,6 @@ class SessionController {
     try {
       const { login, password } = req.body;
 
-      console.log('Сброс пароля:', { login, password });
-
       const findUser = await User.findOne({
         where: {
           id: req.session.userId,
@@ -303,7 +305,6 @@ class SessionController {
         findUser.getDataValue('password')
       );
 
-      console.log({ isPasswordsEqual });
       if (isPasswordsEqual) {
         return res.status(403).send({ error: 'Пароли не должны совпадать!' });
       }
