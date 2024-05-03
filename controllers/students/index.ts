@@ -31,21 +31,25 @@ class StudentsController {
       const excellentCount = await Student.count({
         where: {
           role: 'excellent',
+          UserId: userId,
         },
       });
       const goodCount = await Student.count({
         where: {
           role: 'good',
+          UserId: userId,
         },
       });
       const normalCount = await Student.count({
         where: {
           role: 'normal',
+          UserId: userId,
         },
       });
       const badCount = await Student.count({
         where: {
           role: 'bad',
+          UserId: userId,
         },
       });
 
